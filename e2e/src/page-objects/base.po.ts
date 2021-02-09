@@ -1,4 +1,4 @@
-import {browser, protractor} from 'protractor';
+import { browser, protractor } from 'protractor';
 
 export class BasePage {
 
@@ -12,8 +12,8 @@ export class BasePage {
     locators: any;
 
     validCredentials = {
-        username: 'bibdahal',
-        password: 'nepal123'
+        username: 'cnr_automation',
+        password: 'P@ssw0rd'
     };
 
     invalidCredentials = {
@@ -21,7 +21,7 @@ export class BasePage {
         password: 'invalid'
     };
 
-    constructor(options: any) {
+    constructor (options: any) {
         this.elements = options.elements;
         this.locators = options.locators;
     }
@@ -30,7 +30,7 @@ export class BasePage {
      * check whether the locator is present in dom or not
      * @param locator the element locator
      */
-    inDom(locator) {
+    inDom (locator) {
         try {
             return protractor.ExpectedConditions.visibilityOf(locator);
         } catch (err) {
@@ -42,7 +42,7 @@ export class BasePage {
      * check whether the locator is absent in dom or not
      * @param locator the element locator
      */
-    notInDom(locator) {
+    notInDom (locator) {
         return protractor.ExpectedConditions.stalenessOf(locator);
     }
 
@@ -50,7 +50,7 @@ export class BasePage {
      * waits until locator is available on dom
      * @param locator the element locator
      */
-    async waitUntil(locator) {
+    async waitUntil (locator) {
         await browser.wait(() => {
             return this.inDom(locator);
         }, this.timeout.xl, 'timeout: waiting for element to load.');
@@ -60,7 +60,7 @@ export class BasePage {
      * waits Until Element's style has Visibility:visible
      * @param locator the element locator
      */
-    async waitUntilElementIsVisible(locator) {
+    async waitUntilElementIsVisible (locator) {
         await browser.wait(() => {
             return locator.isDisplayed();
         }, this.timeout.xl, 'timeout: waiting for element to load.');
@@ -70,7 +70,7 @@ export class BasePage {
      * sleeps browser for given miliseconds
      * @param miliseconds the time miliseconds
      */
-    async waitForMilliSeconds(ms) {
+    async waitForMilliSeconds (ms) {
         await browser.sleep(ms);
     }
 
@@ -78,7 +78,7 @@ export class BasePage {
      * sleeps browser for given seconds
      * @param seconds the time seconds
      */
-    async waitForSeconds(seconds) {
+    async waitForSeconds (seconds) {
         await this.waitForMilliSeconds(seconds * 1000);
     }
 
@@ -86,7 +86,7 @@ export class BasePage {
      * waits until locator is hidden from dom
      * @param locator the element locator
      */
-    async waitUntilHide(locator) {
+    async waitUntilHide (locator) {
         await browser.wait(() => {
             return this.notInDom(locator);
         }, this.timeout.xl, 'timeout: waiting for element to hide.');
@@ -95,24 +95,24 @@ export class BasePage {
     /**
      * Click an element
      */
-    async click(element) {
-        await this.waitUntil(element);
+    async click (ele) {
+        await this.waitUntil(ele);
         // await browser.wait(protractor.ExpectedConditions.elementToBeClickable(locator), this.timeout.xl);
-        await browser.actions().mouseMove(element).click().perform();
+        await browser.actions().mouseMove(ele).click().perform();
         await this.waitForMilliSeconds(500);
     }
 
     /**
      * refresh the page
      */
-    async reloadPage() {
+    async reloadPage () {
         await browser.refresh(500);
     }
 
     /**
      * opens the page
      */
-    openPage() {
+    openPage () {
         browser.manage().window().maximize();
         return browser.get(browser.baseUrl);
     }
@@ -122,25 +122,38 @@ export class BasePage {
      * @returns promise
      */
 
-    closeBrowser() {
+    closeBrowser () {
         return browser.close();
     }
+
     /**
      * wait for element and then clears it and again puts the value
      * @param element the element
      * @param value the value
      * @returns Promise
      */
-    async sendValue(element, value) {
-        await this.waitUntil(element);
-        await element.clear().sendKeys(value);
+    async sendValue (ele, value) {
+        await this.waitUntil(ele);
+        await ele.clear().sendKeys(value);
     }
 
     /**
      * set the zoom of the browser
      * @param value the zoom value in percentage
      */
-    browserZoom(value) {
+    browserZoom (value) {
         browser.executeScript(`document.body.style.zoom='${value}%'`);
+    }
+
+    /**
+     * uploads a file with the given name
+     * @param ele the element
+     * @param fileName the fileName
+     */
+    async uploadFile (ele, fileName) {
+        browser.executeScript('arguments[0].style.display=\'inline\';', ele.getWebElement());
+        await this.waitUntil(ele);
+        await this.waitForSeconds(1);
+        await ele.clear().sendKeys(fileName);
     }
 }

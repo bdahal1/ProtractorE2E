@@ -1,13 +1,16 @@
 import { Login } from '../page-objects/login.po';
-import { Current } from '../page-objects/current.po';
+import { Current } from '../page-objects/rams/current.po';
+import { Welcome } from '../page-objects/welcome.po';
 
 describe('RAMS Login Test', () => {
     let login: Login;
     let current: Current;
+    let welcome: Welcome;
 
     beforeEach(async () => {
         login = new Login();
         current = new Current();
+        welcome = new Welcome();
         await login.openPage();
         await login.waitUntil(login.elements.loginPageWrapper);
     });
@@ -37,18 +40,18 @@ describe('RAMS Login Test', () => {
     it('should show current page for valid credentials', async () => {
         await login.fillLoginForm(login.validCredentials.username, login.validCredentials.password);
         await login.click(login.elements.loginSubmitButton);
-        await current.waitUntil(current.elements.currentPageWrapper);
+        await current.waitUntil(welcome.elements.viewRAPSButton);
         await current.logout();
     });
 
-    it('should show current page for valid credentials and logout successfully', async () => {
+    it('should show welcome page for valid credentials and logout successfully', async () => {
         await login.openPage();
         await login.waitUntil(login.elements.loginPageWrapper);
         await login.fillLoginForm(login.validCredentials.username, login.validCredentials.password);
         await login.click(login.elements.loginSubmitButton);
-        await current.waitUntil(current.elements.currentPageWrapper);
+        await current.waitUntil(welcome.elements.viewRAPSButton);
         await current.logout();
         await login.waitUntil(login.elements.loginPageWrapper);
-        expect(login.elements.welcomeHeader.getText()).toEqual('Welcome to RAMS');
+        expect(login.elements.welcomeHeader.getText()).toEqual('Risk Adjustment Metrics and Monitoring System (RAMS)');
     });
 });
